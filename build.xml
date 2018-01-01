@@ -108,7 +108,11 @@
 				includes="${ant.project.name}/**"/>
 		<checksum file="${target.dir}/${project.zip}"
 				  property="zip.md5" />
+		<checksum file="${target.dir}/${project.zip}"
+				  property="zip.sha1"
+				  algorithm="sha"/>
 		<echo file="${target.dir}/${project.zip}.md5">${zip.md5} ${project.zip}${line.separator}</echo>
+		<echo file="${target.dir}/${project.zip}.sha">${zip.sha1} ${project.zip}${line.separator}</echo>
 	</target>
 
 	<target name="wow" depends="test" description="copy files to currnet wow install">
