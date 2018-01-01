@@ -78,7 +78,7 @@
 		<include name="src/*.toc"/>
 		<include name="src/*.lua"/>
 		<include name="README.md"/>
-		<include name="${working.dir}/*.txt"/>
+		<include name="target/working/changelog.txt"/>
 	</patternset>
 
 <!-- -->
