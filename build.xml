@@ -1,0 +1,67 @@
+<project name="Hitlist" default="package">
+
+	<target name="init">
+		<tstamp/>
+		<property environment="env"/>
+		<condition property="build.number" 
+				value="${env.BUILD_NUMBER}"
+				else="Local_Build">
+			<isset property="env.BUILD_NUMBER"/>
+		</condition>
+<!--		<property name="build.number" value="${env.BUILD_NUMBER}"/> -->
+		<property file="build.properties"/>
+		<property name="version.number" value="${Hitlist.version}.${build.number}" />
+		<property name="project.zip" value="${ant.project.name}_${version.number}.zip"/>
+	</target>
+
+	<target name="clean" description="Cleans old builds">
+		<delete dir="build" verbose="true"/>
+		<delete dir="dest" verbose="true"/>
+	</target>
+
+	<target name="package" depends="init,clean" description="makes the zip file -Dbuild.number=#">
+		<mkdir	dir="build/${ant.project.name}"/>
+		<mkdir	dir="dest"/>
+		<copy 	todir="build/${ant.project.name}">
+			<fileset dir=".">
+				<include name="*.lua"/>
+				<include name="*.toc"/>
+				<include name="${ant.project.name}.xml"/>
+				<include name="Readme.txt"/>
+			</fileset>
+			<filterset>
+				<filter token="VERSION" value="${version.number}"/>
+			</filterset>
+		</copy>
+		<zip 	destfile="dest/${project.zip}"
+				basedir="build"
+				includes="${ant.project.name}/**"/>
+		<delete dir="build" verbose="true"/>
+		<checksum file="dest/${project.zip}"
+				  property="zip.md5" />
+		<checksum file="dest/${project.zip}"
+		          property="zip.sha1"
+				  algorithm="sha"/>
+		<echo message="${zip.md5}"/>
+		<echo message="${zip.md5}" file="dest/${project.zip}.md5"/>
+		<echo message="${zip.sha1}" file="dest/${project.zip}.sha"/>
+	</target>
+	
+	<target name="deploy" depends="deploy.check" description="deploys the file" if="deploy.run">
+		<copy todir="${deploy.dir}">
+			<fileset dir="${deploy.from}">
+				<include name="*.zip"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deploy.check">
+		<condition property="deploy.run">
+			<and>
+				<available file="${deploy.from}" type="dir"/>
+				<available file="${deploy.dir}" type="dir"/>
+			</and>
+		</condition>
+	</target>
+
+</project>
