@@ -26,7 +26,6 @@ function Hitlist_OnLoad()
 	HitlistFrame:RegisterEvent("PLAYER_REGEN_DISABLED");
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", Hitlist.CHAT_MSG_SYSTEM);
 
-	
 	--register slash commands
 	SLASH_HITLIST1 = "/hitlist";
 	SLASH_HITLIST2 = "/hl";
@@ -36,7 +35,6 @@ function Hitlist_OnLoad()
 	Hitlist.WAS_DEFEATED_TEXT = "(.+) has defeated (.+) in a duel";
 	Hitlist.HAS_FLED_TEXT = "(.+) has fled from (.+) in a duel";
 end
-
 function Hitlist.ADDON_LOADED()
 	Hitlist.name = UnitName("player");
 	Hitlist.realm = GetRealmName();
@@ -77,7 +75,6 @@ function Hitlist.ADDON_LOADED()
 	
 	Hitlist.pruneData();
 end
-
 function Hitlist.print(msg, showName)
 	-- print to the chat frame
 	-- set showName to false to suppress the addon name printing
@@ -86,19 +83,22 @@ function Hitlist.print(msg, showName)
 	end
 	DEFAULT_CHAT_FRAME:AddMessage( msg );
 end
-
 function Hitlist.debugPrint(msg)
 	if (Hitlist.debug) then
 		Hitlist.print( "(debug) "..msg);
 	end
 end
-
 function Hitlist.printStatus()
 	Hitlist.print("Status Report");
 	Hitlist.print("Version: "..HITLIST_MSG_VERSION);
 	Hitlist.print("Memory usage: "..collectgarbage('count').." kB");
 end
-
+Hitlist.channelTable = {
+	['guild'] = {['func'] = GetNumGuildMembers, ['chan'] = "GUILD"},
+	['party'] = {['func'] = GetNumPartyMembers, ['chan'] = "PARTY"},
+	['raid'] = {['func'] = GetNumRaidMembers, ['chan'] = "RAID"},
+	['bg'] = {['fund'] = function return 1 end, ['chan']= "BATTLEGROUND"},
+}
 function Hitlist.printScores( param )
 	timerStr = "- in the last "..Hitlist.secondsToTime(time() - Hitlist.timerData.init).." (%s-%s): ";
 	timerCount = 0;
@@ -119,25 +119,13 @@ function Hitlist.printScores( param )
 	outStr = string.format(outStr, totals.W, totals.L);
 	
 	if (param) then
-		if (param == 'guild') and (GetNumGuildMembers() > 0) then
-			SendChatMessage( outStr, "GUILD" );
-			if (timerCount > 0) then
-				SendChatMessage( timerStr, "GUILD" );
-			end
-		elseif (param == 'party') and (GetNumPartyMembers() > 0) then
-			SendChatMessage( outStr, "PARTY" );
-			if (timerCount > 0) then
-				SendChatMessage( timerStr, "PARTY" );
-			end
-		elseif (param == 'raid') and (GetNumRaidMembers() > 0) then
-			SendChatMessage( outStr, "RAID" );
-			if (timerCount > 0) then
-				SendChatMessage( timerStr, "RAID" );
-			end
-		elseif (param == 'bg') and (true) then  -- figure out how to make sure the player is in a BG
-			SendChatMessage( outStr, "BATTLEGROUND" );
-			if (timerCount > 0) then
-				SendChatMessage( timerStr, "BATTLEGROUND" );
+		if (Hitlist.channelTable[param]) then
+			Hitlist.print("Knows channel");
+			if (Hitlist.channelTable[param].func() > 0) then
+				SendChatMessage( outStr, Hitlist.channelTable[param].chan );
+				if (timerCount > 0) then
+					SendChatMessage( timerStr, Hitlist.channelTable[param].chan );
+				end
 			end
 		elseif (param ~= "") then
 			SendChatMessage( outStr, "WHISPER", nil, param);
@@ -154,25 +142,21 @@ function Hitlist.printScores( param )
 --		Hitlist.print(outStr);
 	end
 end
-
 function Hitlist.initCombatData()
 	Hitlist.combatData = {};    -- table is recorded as key is source data is target.  [player] damaged target
 end
-
 function Hitlist.initTimerData()
 	-- timerData will mirror Hitlist_scores
 	Hitlist.timerData = {};
 	Hitlist.timerData.init = time();
 	Hitlist.timerData.class = {};
 end
-
 function Hitlist.PLAYER_REGEN_DISABLED(...)
 --function Hitlist.combatStart()
 	Hitlist.debugPrint("Combat started");
 	Hitlist.initCombatData();
 	Hitlist.inCombat = 1
 end
-
 function Hitlist.OnUNIT_DIED( victimGUID, victim )
 	-- combatData[wasDamagedBy][didDamage].counter
 	local victimType = (tonumber(victimGUID:sub(5,5), 16) % 8);
@@ -211,7 +195,6 @@ function Hitlist.OnUNIT_DIED( victimGUID, victim )
 		end
 	end
 end
-
 function Hitlist.recordKilledBy( record, hitter, classInfo )
 	if (record[hitter]) then
 		record[hitter].killedby = record[hitter].killedby + 1;
@@ -230,7 +213,6 @@ function Hitlist.recordKilledBy( record, hitter, classInfo )
 		record.class[classInfo.englishClass].localClass = classInfo.localClass;
 	end
 end
-
 function Hitlist.recordKilled( record, victim, classInfo )
 	if (record[victim]) then
 		record[victim].killed = record[victim].killed + 1;    -- increment killed counter
@@ -249,7 +231,6 @@ function Hitlist.recordKilled( record, victim, classInfo )
 		record.class[classInfo.englishClass].localClass = classInfo.localClass;
 	end
 end
-
 function Hitlist.PLAYER_REGEN_ENABLED()
 	Hitlist.debugPrint("Combat ended");
 	Hitlist.inCombat = 0;
@@ -264,7 +245,6 @@ function Hitlist.PLAYER_REGEN_ENABLED()
 		end
 	end
 end
-
 function Hitlist.damageDone( sourceName, sourceGUID, sourceFlags, targetName, targetGUID, targetFlags )
 	-- combatData[wasDamagedBy][didDamage].counter
 	local sourceType = (tonumber(sourceGUID:sub(5,5), 16) % 8);
@@ -297,7 +277,6 @@ function Hitlist.damageDone( sourceName, sourceGUID, sourceFlags, targetName, ta
 		end -- nil check
 	end 
 end
-
 function Hitlist.COMBAT_LOG_EVENT_UNFILTERED(...)
 	-- http://www.wowwiki.com/API_COMBAT_LOG_EVENT
 	_, _, Hitlist.event = select(1, ...);  -- frame, ts, event
@@ -313,7 +292,6 @@ function Hitlist.COMBAT_LOG_EVENT_UNFILTERED(...)
 		Hitlist.OnUNIT_DIED( targetGUID, targetName );
 	end
 end
-
 function Hitlist.CHAT_MSG_SYSTEM(frame, event, message, ...)
 	Hitlist.debugPrint(event..":"..message);
 
@@ -344,7 +322,6 @@ function Hitlist.CHAT_MSG_SYSTEM(frame, event, message, ...)
 		end
 	end
 end
-
 function Hitlist.parseCmd(msg)
 	if msg then
 		local a,b,c = strfind(msg, "(%S+)");  --contiguous string of non-space characters (start, end, firstword, rest of str)
@@ -355,7 +332,6 @@ function Hitlist.parseCmd(msg)
 		end
 	end
 end
-
 -- slash function handle
 function Hitlist.command(msg)
 	--cmd will be nothing
@@ -376,7 +352,6 @@ function Hitlist.command(msg)
 		Hitlist.printScores( cmd );
 	end
 end
-
 function Hitlist_HookSetUnit(arg1, arg2)
 	local Name = GameTooltip:GetUnit();
 	local Realm = ""; 
@@ -398,7 +373,6 @@ function Hitlist_HookSetUnit(arg1, arg2)
 		end
 	end
 end
-
 function Hitlist.recordPlayerClass( playerName, playerGUID )
 	if (Hitlist.playerClass[playerName]) then
 	else
@@ -410,7 +384,6 @@ function Hitlist.recordPlayerClass( playerName, playerGUID )
 		Hitlist.debugPrint("Class recorded");
 	end
 end
-
 function Hitlist.secondsToTime(secsIn)
 	-- Blizzard's SecondsToTime() function cannot be printed into Chat.  Has bad escape codes.
 	local day, hour, minute, sec = 0,0,0,0;
@@ -432,7 +405,6 @@ function Hitlist.secondsToTime(secsIn)
 	end
 	return string.format("%is", sec);
 end
-
 function Hitlist.pruneData()
 	local cutOff = 90 * 86400;    -- 90 days
 	cutOff = time() - cutOff;

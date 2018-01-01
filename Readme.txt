@@ -23,6 +23,7 @@ Testing by:  Xildar @ hyjal
              Noski @ Ner'zhul
 
 Change Log:
+0.10    - Ranking mods
 0.9     - 4.2 fixes.  Thanks Blizzard
 0.8     - Cataclysm fixes
 0.7     - Cleaned up some event tracking
