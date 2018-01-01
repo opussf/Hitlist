@@ -1,4 +1,4 @@
-## Interface: 40200
+## Interface: @INTERFACE@
 ## Title: Hitlist
 ## Notes: Hitlist PvP Score keeper
 ## Author: sistersally of hyjal
