@@ -3,7 +3,7 @@
 ## Notes: Hitlist PvP Score keeper
 ## Author: sistersally of hyjal
 ## Version: @VERSION@
-## Description: Keeps track of that that have killed you. v@VERSION@
+## Description: Keeps track of who you have killed, and who have killed you in PvP.
 ## SavedVariables: Hitlist_scores
 Hitlist.lua
 Hitlist.xml
