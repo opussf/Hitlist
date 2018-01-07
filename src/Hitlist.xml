@@ -5,7 +5,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 	<Frame name="HitlistFrame" frameStrata="HIGH" toplevel="true" enableMouse="true" movable="true" parent="UIParent">
 		<Scripts>
 			<OnLoad>
-				Hitlist_OnLoad();
+				Hitlist.OnLoad();
 			</OnLoad>
 			<OnEvent>
 				Hitlist[event](self, ...);

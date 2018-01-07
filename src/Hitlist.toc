@@ -1,9 +1,9 @@
-## Interface: 40200
+## Interface: @INTERFACE@
 ## Title: Hitlist
 ## Notes: Hitlist PvP Score keeper
 ## Author: sistersally of hyjal
 ## Version: @VERSION@
-## Description: Keeps track of that that have killed you
+## Description: Keeps track of who you have killed, and who have killed you in PvP.
 ## SavedVariables: Hitlist_scores
 Hitlist.lua
 Hitlist.xml
