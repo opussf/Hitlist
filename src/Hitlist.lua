@@ -387,7 +387,6 @@ function Hitlist.HookSetUnit(arg1, arg2)
 end
 function Hitlist.pruneData()
 	local cutOff = 90 * 86400  -- 90 days
-	local cutOff = 120
 	cutOff = time() - cutOff
 	for player, vals in pairs( Hitlist_scores[Hitlist.realm][Hitlist.name] ) do
 		if( player ~= "class" ) then
