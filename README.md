@@ -11,12 +11,13 @@ This was born from talking to a few people that PvP a lot more than I do.
 
 Use /hitlist or /hl.
 ```
-/hl reset     - will reset the kill counter
-/hl party
-/hl raid
-/hl guild
-/hl bg        - send hl info to Battleground
-/hl <name>    - send hl info to party, raid, guild or player
+/hl reset           - will reset the kill counter
+/hl print           - print stats
+/hl print party
+/hl print raid
+/hl print guild
+/hl print bg        - send hl info to Battleground
+/hl print <name>    - send hl info to party, raid, guild or player
 /hl status
 ```
 
@@ -35,7 +36,7 @@ Testing by:
 
 Change Log:
 ```
-0.11    -
+0.10    - Rewrite and re-release.
 0.9     - 4.2 fixes.  Thanks Blizzard
 0.8     - Cataclysm fixes
 0.7     - Cleaned up some event tracking

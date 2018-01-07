@@ -27,7 +27,6 @@ Hitlist_scores = {}
 
 function Hitlist.OnLoad()
 	HitlistFrame:RegisterEvent("ADDON_LOADED")
-	--HitlistFrame:RegisterEvent("VARIABLES_LOADED")
 	HitlistFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 	HitlistFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 	HitlistFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -71,18 +70,6 @@ function Hitlist.PLAYER_REGEN_ENABLED()
 		Hitlist.print( "Combat ended" )
 	end
 	Hitlist.inCombat = nil
-	--[[
-	if (Hitlist.debug) then
-		hitCount = 0;
-		for hurt, hitBy in pairs(Hitlist.combatData) do
-			hitCount = hitCount + 1;
-			Hitlist.debugPrint(hurt.." was hurt by:");
-		end
-		if (hitCount == 0) then
-			Hitlist.debugPrint("No PvP took place");
-		end
-	end
-	]]
 end
 function Hitlist.COMBAT_LOG_EVENT_UNFILTERED( ... )
 	-- http://www.wowwiki.com/API_COMBAT_LOG_EVENT
