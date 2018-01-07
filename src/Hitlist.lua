@@ -386,12 +386,11 @@ function Hitlist.HookSetUnit(arg1, arg2)
 	end
 end
 function Hitlist.pruneData()
-	local cutOff = 90 * 86400  -- 90 days
-	cutOff = time() - cutOff
+	local cutOff = time() - (90 * 86400)  -- 90 days
 	for player, vals in pairs( Hitlist_scores[Hitlist.realm][Hitlist.name] ) do
 		if( player ~= "class" ) then
-			if( vals.lastFight == nil ) then
-				vals.lastFight = time()  -- if last fight time not recorded, record it so that it can be pruned later
+			if( not vals.lastFight ) then
+				vals.lastFight = time()  -- if lastFight time not recorded, record it so that it can be pruned later
 			end
 			if( vals.lastFight < cutOff ) then
 				Hitlist.print( player.."  pruned." )

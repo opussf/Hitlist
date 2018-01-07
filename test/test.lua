@@ -301,8 +301,62 @@ function test.test_printScores_01()
 	Hitlist.CHAT_MSG_SYSTEM( "frame", "event", "testPlayer has fled from otherPlayer-otherRealm in a duel" )
 	Hitlist.printScores( "party" )
 end
-
-
+------------------------------------------
+-- Print Scores
+function test.initPruneData()
+	Hitlist_scores = {
+		["testRealm"] = {
+			["testPlayer"] = {
+				["class"] = {
+					["ROGUE"] = {
+						["localClass"] = "Rogue",
+						["killedby"] = 2,
+						["killed"] = 1,
+					},
+				},
+				["otherPlayer-otherRealm"] = {
+					["lastFight"] = time(),
+					["killedby"] = 2,
+					["killed"] = 0,
+				},
+				["oldPlayer-oldRealm"] = {
+					["lastFight"] = time() - (89 * 86400),
+					["killedby"] = 2,
+					["killed"] = 0,
+				},
+				["tooOldPlayer-tooOldRealm"] = {
+					["lastFight"] = time() - (95 * 86400),
+					["killedby"] = 2,
+					["killed"] = 0,
+				},
+				["notimePlayer-notimeRealm"] = {
+					["killedby"] = 2,
+					["killed"] = 0,
+				},
+			},
+		},
+	}
+end
+function test.test_pruneData_keepsYoungRecord()
+	test.initPruneData()
+	Hitlist.pruneData()
+	assertTrue( Hitlist_scores["testRealm"]["testPlayer"]["otherPlayer-otherRealm"] )
+end
+function test.test_pruneData_keepsOldRecord()
+	test.initPruneData()
+	Hitlist.pruneData()
+	assertTrue( Hitlist_scores["testRealm"]["testPlayer"]["oldPlayer-oldRealm"] )
+end
+function test.test_pruneData_removesTooOldRecord()
+	test.initPruneData()
+	Hitlist.pruneData()
+	assertIsNil( Hitlist_scores["testRealm"]["testPlayer"]["tooOldPlayer-tooOldRealm"] )
+end
+function test.test_pruneData_adds_lastFight_ifnotthere()
+	test.initPruneData()
+	Hitlist.pruneData()
+	assertEquals( time(), Hitlist_scores["testRealm"]["testPlayer"]["notimePlayer-notimeRealm"]["lastFight"] )
+end
 
 
 --	SWING_DAMAGE,Player-3661-06DB0FE4,"Airwin-Hyjal",0x511,0x0,Creature-0-3131-0-13377-2544-00004ACCAE,"Southern Sand Crawler",0x10a28,0x0,0000000000000000,0000000000000000,0,0,0,0,-1,0,0,0,0.00,0.00,0,426177,424932,1,0,0,0,1,nil,nil
